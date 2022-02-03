@@ -4,9 +4,8 @@
 
 ---
 
-This is the Erebus library developed to perform mineral classification, missing value imputation by 
-multivariate regression and mineral formula prediction by several Random Forest classification 
-and regression nested models.
+This is the Erebus library developed to perform mineral classification, missing value imputation,
+validation and upload of EMPA data into mineralogy-rocks data storage.
 
 The models have been developed at the [Comenius University](https://uniba.sk/en/), with the data of
 Prof Marián Putiš research team at the [Department of Mineralogy, Petrology and Economic Geology](https://kmplg.sk/?lang=en) of 
@@ -18,6 +17,6 @@ and was supported by the Slovak Research and Development Agency (contract APVV-1
 
 ---
 
-## Copyright and License
+### Copyright
 
 The source code for Erebus is licensed based on the MIT License, see [LICENSE](LICENSE).

@@ -7,7 +7,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly', ]
+SCOPES = ['https://www.googleapis.com/auth/drive', ]
 
 
 class DriveApi:
@@ -41,7 +41,6 @@ class DriveApi:
             # TODO: handle error?
             print(f'An error occurred when creating a drive service: {error}')
 
-
     def get_sheets_meta(self, parent_folder: str, mineral_list: list) -> list:
         parent_folder_id = self.folders_map[parent_folder]
 
@@ -64,7 +63,6 @@ class DriveApi:
         except HttpError as error:
             # TODO: handle error?
             print(f'An error occurred: {error}')
-
 
     def disconnect(self):
         self.service.close()

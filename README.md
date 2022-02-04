@@ -1,11 +1,11 @@
 # Erebus
 
-### Parsing and uploading EMPA data for mineralogy-rocks API
+### Parsing and uploading EPMA data for mineralogy-rocks API
 
 ---
 
 This is the Erebus library developed to perform mineral classification, missing value imputation,
-validation and upload of EMPA data into mineralogy-rocks data storage.
+validation and upload of EPMA data into mineralogy-rocks data storage.
 
 The models have been developed at the [Comenius University](https://uniba.sk/en/), with the data of
 Prof Marián Putiš research team at the [Department of Mineralogy, Petrology and Economic Geology](https://kmplg.sk/?lang=en) of 

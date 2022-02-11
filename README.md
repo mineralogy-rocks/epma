@@ -1,4 +1,4 @@
-# Erebus
+# EMPA
 
 ### Parsing and uploading EPMA data for mineralogy-rocks API
 
@@ -19,4 +19,4 @@ and was supported by the Slovak Research and Development Agency (contract APVV-1
 
 ### Copyright
 
-The source code for Erebus is licensed based on the MIT License, see [LICENSE](LICENSE).
+The source code for EMPA is licensed based on the MIT License, see [LICENSE](LICENSE).

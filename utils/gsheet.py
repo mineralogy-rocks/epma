@@ -17,17 +17,22 @@ class GoogleSheet:
         self.status = None
         self.groups = None
 
-    def _get_children(self, specie_name: str, status_in: list = [0.0], taxonomy_level: str = 'group') -> np.ndarray:
+    def _get_children(self, specie_name: str, status_in: list = [], taxonomy_level: str = 'group') -> np.ndarray:
         mineral_list = self.groups.loc[
-            (self.groups[taxonomy_level] == specie_name) & (~self.groups['mineral_name'].isna()),
-            'mineral_name']
+            (self.groups[taxonomy_level].str.lower() == specie_name.lower()) & (~self.groups['mineral_name'].isna())
+        ][['mineral_name']]
 
         mineral_list = mineral_list.drop_duplicates('mineral_name').set_index('mineral_name')
         status = self.status.set_index('Mineral_Name')
         mineral_list = mineral_list.join(status['all_indexes'].str.split(r'; +|;'), how='inner')
-        mineral_list = mineral_list.loc[mineral_list['all_indexes'].isin(status_in), 'mineral_name']
+        mineral_list['all_indexes'] = mineral_list['all_indexes'].apply(lambda x: [float(x_) for x_ in x])
 
-        return np.unique(mineral_list.to_numpy())
+        if len(status_in):
+            mineral_status_flat = mineral_list.explode('all_indexes')
+            mineral_status_flat = mineral_status_flat.loc[mineral_status_flat['all_indexes'].isin(status_in)]
+            mineral_list = mineral_list.loc[mineral_status_flat.index]
+
+        return np.unique(mineral_list.index.to_numpy())
 
     def _get_local_name(self, ss_name: str):
         try:

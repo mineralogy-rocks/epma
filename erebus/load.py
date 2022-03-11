@@ -22,13 +22,17 @@ def get_pyroxene_group():
     output = pd.DataFrame(columns=['rruff_id', 'mineral_name', 'SiO2', 'FeO', 'Fe2O3', 'MgO', 'CaO', 'Al2O3', 'TiO2',
                                    'MnO', 'Na2O', 'K2O', 'Cr2O3', 'F', 'Total', ])
 
+    # TODO: add regex pattern to match column headers of oxide names
+
+    oxide_pattern = re.compile(r"SiO2|FeO|Fe2O3|MgO|CaO|Al2O3|TiO2|MnO|ZnO|Na2O|K2O|Cr2O3|F|Total")
+
     for spreasdheet in sheets_meta:
         spreadsheet = sheets_meta[0] # TODO: remove after testing
-        file_id = spreasdheet['id']
-        regex_pattern = re.match('(^[A-Za-z0-9-]+)__(\w+-\d+)__', spreasdheet['name'])
+        file_id = spreadsheet['id']
+        regex_pattern = re.match('(^[A-Za-z0-9-]+)__(\w+-\d+)__', spreadsheet['name'])
         mineral_name, rruff_id = regex_pattern.group(1), regex_pattern.group(2)
 
-        request = DriveApi.service.files().get_media(fileId=file_id)
+        request = DriveApi.service.files().get_media(fileId=file_id) # Actinolite - 1emu_NdP4ZHrO7eQyLCw0yJk7LOcp1_Y_
         fh = io.BytesIO()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
@@ -49,3 +53,20 @@ def get_pyroxene_group():
             # TODO: add regex filtering of unnamed rows, e.g. 'Unnamed: 14'
 
             output.append(transpose_.reset_index(drop=True))
+
+
+    # 1 iterate over columns and get a column of Oxides
+    test = data_['pdf_output'] # or Sheet1
+    columns_ = test.columns.to_list()
+    column = None
+    while columns_:
+        column_ = columns_.pop(0)
+        oxide_pattern = re.compile(r"As2O5|SiO2|FeO|Fe2O3|MgO|CaO|CuO|Al2O3|TiO2|MnO|ZnO|Na2O|K2O|PbO|SO3|Cr2O3|F|"
+                                   r"Total")
+        if test[column_].str.match(oxide_pattern, na=False).sum() > 4:
+            test.rename(columns={column_: 'Oxide'}, inplace=True)
+            break
+
+    analyses = test[test[column_].str.match(oxide_pattern, na=False)]
+
+    # 3 capture ID columns

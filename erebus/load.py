@@ -21,22 +21,35 @@ def get_pyroxene_group():
     pyroxene_group = GoogleSheet._get_children(specie_name='pyroxene group', status_in=[constants.IMA_SPECIE],
                                                taxonomy_level='group')
     sheets_meta = DriveApi.get_sheets_meta(parent_folder='RRUFF', mineral_list=pyroxene_group)
-    output = pd.DataFrame(columns=['rruff_id', 'mineral_name', 'analysis', 'SiO2', 'FeO', 'Fe2O3', 'MgO', 'CaO', 'Al2O3',
-                                   'TiO2', 'MnO', 'Na2O', 'K2O', 'Cr2O3', 'F', 'Total', ])
+    # output = pd.DataFrame(columns=['rruff_id', 'mineral_name', 'analysis', 'SiO2', 'FeO', 'Fe2O3', 'MgO', 'CaO', 'Al2O3',
+    #                                'TiO2', 'MnO', 'Na2O', 'K2O', 'Cr2O3', 'F', 'Total', ])
+
+    output = pd.DataFrame()
 
     # TODO: add regex pattern to match column headers of oxide names
 
     oxide_pattern = re.compile(r"^"
-                               r"(BaO|SiO2|FeO|Fe2O3|MgO|CaO|Al2O3|TiO2|MnO|ZnO|Na2O|K2O|CO2|Cr2O3|CuO|F)"
+                               r"(Al2O3|BaO|SiO2|FeO|Fe2O3|MgO|CaO|TiO2|MnO|Mn2O3|ZnO|Na2O|K2O|CO2|Cr2O3|CuO|F)"
                                r"$")
     cation_pattern = re.compile(r"^"
-                               r"(Si|Al|Mg|Fe|Ca|Ti|Mn|Na|Cr|Cu)"
-                               r"$")
+                                r"("
+                                r"Si|"
+                                r"(IV.*|VI.*)?Al|"
+                                r"Mg[12]?|"
+                                r"Fe(2|3)?(\+)?( *tot)?|"
+                                r"Ca|"
+                                r"Ti|"
+                                r"Mn|"
+                                r"Na|"
+                                r"Cr|"
+                                r"Cu|"
+                                r"Zn)"
+                                r"$")
 
-    for spreasdheet in sheets_meta:
-        spreadsheet = sheets_meta[0] # TODO: remove after testing
-        file_id = spreadsheet['id']
-        regex_pattern = re.match('(^[A-Za-z0-9-]+)__(\w+-\d+)__', spreadsheet['name'])
+    for spreadsheet_ in sheets_meta:
+        # spreadsheet = sheets_meta[0] # TODO: remove after testing
+        file_id = spreadsheet_['id']
+        regex_pattern = re.match('(^[A-Za-z0-9-]+)__(\w+-\d+)__', spreadsheet_['name'])
         mineral_name, rruff_id = regex_pattern.group(1), regex_pattern.group(2)
 
         # NOTE: Augite - 1v7J6USE6njnCFP6IN3VaziTiNaMNvRP5
@@ -61,10 +74,11 @@ def get_pyroxene_group():
 
             # TODO: add regex filtering of unnamed rows, e.g. 'Unnamed: 14'
 
+
             output.append(transpose_.reset_index(drop=True))
 
 
-    test = data_['pdf_output']  # or Sheet1
+    test = data_['pdf_output'].copy()  # or Sheet1
 
     # 0 skip non-meaningful rows
     test.set_index(0, inplace=True)
